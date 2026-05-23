@@ -1,0 +1,58 @@
+name: "CodeQL Advanced"
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  schedule:
+    - cron: '24 2 * * 4'
+
+jobs:
+  analyze:
+    name: Analyze (${{ matrix.language }})
+    runs-on: ${{ (matrix.language == 'swift' && 'macos-latest') || 'ubuntu-latest' }}
+    permissions:
+      security-events: write
+      packages: read
+      actions: read
+      contents: read
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+        - language: javascript-typescript
+          build-mode: none
+        - language: swift
+          build-mode: manual
+          
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Check for Swift file changes
+      id: swift-check
+      run: |
+        if git diff --name-only origin/main HEAD | grep -E '\.(swift|xcodeproj|xcworkspace)$' > /dev/null; then
+          echo "swift-changed=true" >> $GITHUB_OUTPUT
+        else
+          echo "swift-changed=false" >> $GITHUB_OUTPUT
+        fi
+      if: matrix.language == 'swift'
+
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@v4
+      with:
+        languages: ${{ matrix.language }}
+        build-mode: ${{ matrix.build-mode }}
+
+    - name: Run manual build steps
+      if: matrix.language == 'swift' && steps.swift-check.outputs.swift-changed == 'true'
+      shell: bash
+      run: xcodebuild -project healthexport.xcodeproj -scheme healthexport -configuration Debug -derivedDataPath build
+
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v4
+      with:
+        category: "/language:${{matrix.language}}"
