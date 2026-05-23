@@ -2,31 +2,30 @@
 //  healthexportApp.swift
 //  healthexport
 //
-//  Created by Hannah Austin on 22/05/2026.
-//
 
 import SwiftUI
-import SwiftData
+import FirebaseCore
 
 @main
 struct healthexportApp: App {
-    var sharedModelContainer: ModelContainer = {
-        let schema = Schema([
-            Item.self,
-        ])
-        let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
 
-        do {
-            return try ModelContainer(for: schema, configurations: [modelConfiguration])
-        } catch {
-            fatalError("Could not create ModelContainer: \(error)")
+    init() {
+        // Skip setup entirely when running inside Xcode Previews.
+        guard ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] != "1" else { return }
+
+        // FirebaseApp.configure() calls fatalError if the plist is missing from the bundle.
+        // Guard here so a missing/misconfigured plist degrades gracefully instead of crashing.
+        if Bundle.main.path(forResource: "GoogleService-Info", ofType: "plist") != nil {
+            FirebaseApp.configure()
         }
-    }()
+
+        ExportScheduler.shared.registerBackgroundTask()
+        ExportScheduler.shared.scheduleNextExport()
+    }
 
     var body: some Scene {
         WindowGroup {
             ContentView()
         }
-        .modelContainer(sharedModelContainer)
     }
 }

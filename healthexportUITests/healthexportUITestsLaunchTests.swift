@@ -2,7 +2,7 @@
 //  healthexportUITestsLaunchTests.swift
 //  healthexportUITests
 //
-//  Created by Hannah Austin on 22/05/2026.
+//  healthexportUITests
 //
 
 import XCTest
