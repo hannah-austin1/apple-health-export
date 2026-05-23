@@ -21,7 +21,7 @@ iOS app that reads selected metrics from Apple HealthKit and POSTs them to a Fir
 1. **Clone and open**
 
    ```bash
-   git clone <your-repo-url>
+   git clone git@github.com:hannah-austin1/apple-health-export.git
    cd healthexport
    open healthexport.xcodeproj
    ```
