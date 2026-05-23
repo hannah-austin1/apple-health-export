@@ -79,6 +79,24 @@ iOS app that reads selected metrics from Apple HealthKit and POSTs them to a Fir
 
 Do not commit `GoogleService-Info.plist`, API keys, or Apple Developer team IDs. If a key was ever committed or shared, rotate it in the Firebase Console.
 
+## Tests
+
+**Firebase functions** (`apple-health-api/functions`):
+
+```bash
+cd apple-health-api/functions
+npm install
+npm test
+```
+
+**iOS app** — in Xcode use **Product → Test** (⌘U), or:
+
+```bash
+xcodebuild test -scheme healthexport -destination 'platform=macOS' -only-testing:healthexportTests
+```
+
+The app target needs a development signing team configured for command-line test runs (HealthKit entitlements).
+
 ## License
 
 Add your license here if you publish the repo.

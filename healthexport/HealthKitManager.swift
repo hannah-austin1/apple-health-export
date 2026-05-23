@@ -199,16 +199,8 @@ class HealthKitManager: ObservableObject {
                     continuation.resume(returning: nil)
                     return
                 }
-                let asleepValues: Set<Int> = [
-                    HKCategoryValueSleepAnalysis.asleepUnspecified.rawValue,
-                    HKCategoryValueSleepAnalysis.asleepCore.rawValue,
-                    HKCategoryValueSleepAnalysis.asleepDeep.rawValue,
-                    HKCategoryValueSleepAnalysis.asleepREM.rawValue
-                ]
-                let totalSeconds = samples
-                    .filter { asleepValues.contains($0.value) }
-                    .reduce(0.0) { $0 + $1.endDate.timeIntervalSince($1.startDate) }
-                continuation.resume(returning: totalSeconds > 0 ? totalSeconds / 3600.0 : nil)
+                let segments = samples.map { ($0.value, $0.startDate, $0.endDate) }
+                continuation.resume(returning: SleepAnalysisAggregator.totalHours(samples: segments))
             }
             healthStore.execute(query)
         }

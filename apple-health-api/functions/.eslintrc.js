@@ -21,6 +21,7 @@ module.exports = {
   },
   ignorePatterns: [
     "/lib/**/*", // Ignore built files.
+    "/test/**/*", // Unit tests (vitest).
     "/generated/**/*", // Ignore generated files.
     "/scripts/**/*", // Dev-only test scripts, not deployed.
     "src/test.ts", // Scratch test file, not deployed.

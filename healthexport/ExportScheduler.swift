@@ -23,7 +23,7 @@ class ExportScheduler {
         let request = BGProcessingTaskRequest(identifier: Self.taskIdentifier)
         request.requiresNetworkConnectivity = true
         request.requiresExternalPower = false
-        request.earliestBeginDate = nextExportDate()
+        request.earliestBeginDate = Self.nextExportDate()
         do {
             try BGTaskScheduler.shared.submit(request)
         } catch {
@@ -31,15 +31,15 @@ class ExportScheduler {
         }
     }
 
-    private func nextExportDate() -> Date {
-        let calendar = Calendar.current
-        var components = calendar.dateComponents([.year, .month, .day], from: Date())
+    /// Next 2:00 AM local time (today if still in the future, otherwise tomorrow).
+    static func nextExportDate(calendar: Calendar = .current, now: Date = Date()) -> Date {
+        var components = calendar.dateComponents([.year, .month, .day], from: now)
         components.hour = 2
         components.minute = 0
         components.second = 0
-        guard let today2AM = calendar.date(from: components) else { return Date() }
-        if today2AM > Date() { return today2AM }
-        return calendar.date(byAdding: .day, value: 1, to: today2AM) ?? Date()
+        guard let today2AM = calendar.date(from: components) else { return now }
+        if today2AM > now { return today2AM }
+        return calendar.date(byAdding: .day, value: 1, to: today2AM) ?? now
     }
 
     private func handleExport(task: BGProcessingTask) {

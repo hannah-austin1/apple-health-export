@@ -9,9 +9,6 @@ import FirebaseCore
 class CloudFunctionService {
     static let shared = CloudFunctionService()
 
-    private static let region = "europe-west1"
-    private static let functionName = "appleHealth"
-
     private let dayFormatter: DateFormatter = {
         let f = DateFormatter()
         f.dateFormat = "yyyy-MM-dd"
@@ -57,11 +54,11 @@ class CloudFunctionService {
         var request = URLRequest(url: try functionURL())
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.httpBody = try JSONSerialization.data(withJSONObject: [
-            "data": samples,
-            "from": from,
-            "to": to,
-        ])
+        request.httpBody = try CloudFunctionExport.exportPayload(
+            samples: samples,
+            from: from,
+            to: to
+        )
 
         let (responseData, response) = try await URLSession.shared.data(for: request)
 
@@ -76,8 +73,9 @@ class CloudFunctionService {
         guard let projectID = FirebaseApp.app()?.options.projectID else {
             throw ExportError.firebaseNotConfigured
         }
-        let urlString = "https://\(Self.region)-\(projectID).cloudfunctions.net/\(Self.functionName)"
-        guard let url = URL(string: urlString) else { throw ExportError.invalidURL(urlString) }
+        guard let url = CloudFunctionExport.functionURL(projectID: projectID) else {
+            throw ExportError.invalidURL(projectID)
+        }
         return url
     }
 
