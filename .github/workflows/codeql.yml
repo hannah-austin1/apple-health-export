@@ -34,7 +34,7 @@ jobs:
     - name: Check for Swift file changes
       id: swift-check
       run: |
-        if git diff --name-only origin/main HEAD | grep -E '\.(swift|xcodeproj|xcworkspace)$' > /dev/null; then
+        if find . -name "*.swift" -o -name "*.xcodeproj" -o -name "*.xcworkspace" | grep -v ".git" > /dev/null; then
           echo "swift-changed=true" >> $GITHUB_OUTPUT
         else
           echo "swift-changed=false" >> $GITHUB_OUTPUT
