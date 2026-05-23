@@ -1,6 +1,10 @@
 # Health Export
 
-iOS app that reads selected metrics from Apple HealthKit and POSTs them to a Firebase Cloud Function for storage or downstream processing.
+Read selected metrics from Apple Health and POSTs them to a Firebase Cloud Function for storage or downstream processing.
+There are two ways to do this:
+   - Using the iOS app on your device with HealthKit
+   - Using Apple shortcuts
+   - Use the README in the apple-health-api folder to configure Firebase
 
 ## Features
 
@@ -9,14 +13,16 @@ iOS app that reads selected metrics from Apple HealthKit and POSTs them to a Fir
 - HealthKit background delivery for observer-based updates
 - Metrics: steps, active energy, distance, resting/average heart rate, weight, blood oxygen, sleep, workouts
 
-## Requirements
+## iOS
+
+### Requirements
 
 - Xcode 16+ (project targets recent iOS / macOS SDKs)
 - Apple Developer account with **HealthKit** capability enabled
 - A Firebase project with an iOS app registered
 - A deployed HTTPS Cloud Function named `appleHealth` in region `europe-west1` (see `CloudFunctionService` in `healthexport/FirestoreService.swift`)
 
-## Setup
+### Setup
 
 1. **Clone and open**
 
@@ -64,6 +70,11 @@ iOS app that reads selected metrics from Apple HealthKit and POSTs them to a Fir
 
    Register the background task identifier `com.healthexport.dailyHealthExport` in your Apple Developer portal and enable **Background processing** for the app.
 
+## Shortcuts
+Alternatively you can upload using shortcuts and entering your URL. It can be automated but it's buggy.
+   - [iCloud shortcut for upload](https://www.icloud.com/shortcuts/9c37a6d76be4403ca2b9b40b193a6e86)
+   - [iCloud shortcut for API call](https://www.icloud.com/shortcuts/9c37a6d76be4403ca2b9b40b193a6e86)
+
 ## Project layout
 
 | Path | Purpose |
@@ -79,7 +90,7 @@ iOS app that reads selected metrics from Apple HealthKit and POSTs them to a Fir
 
 Do not commit `GoogleService-Info.plist`, API keys, or Apple Developer team IDs. If a key was ever committed or shared, rotate it in the Firebase Console.
 
-## Tests
+### Tests
 
 **Firebase functions** (`apple-health-api/functions`):
 
@@ -97,6 +108,4 @@ xcodebuild test -scheme healthexport -destination 'platform=macOS' -only-testing
 
 The app target needs a development signing team configured for command-line test runs (HealthKit entitlements).
 
-## License
 
-Add your license here if you publish the repo.
