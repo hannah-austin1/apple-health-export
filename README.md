@@ -40,13 +40,15 @@ iOS app that reads selected metrics from Apple HealthKit and POSTs them to a Fir
 
    `GoogleService-Info.plist` is gitignored and must be present in the project root for builds.
 
+   Firebase functions are stored in the apple-health-api folder (there's a README there)
+
 4. **Signing**
 
    Select your **Team** in Xcode for the app and test targets. No team ID is committed in the project file.
 
 5. **Cloud Function**
 
-   Deploy a function that accepts JSON:
+   Deploy a function that accepts JSON or use the provided example:
 
    ```json
    { "data": [ { "metric": "...", "value": "...", "date": "yyyy-MM-dd" } ], "from": "yyyy-MM-dd", "to": "yyyy-MM-dd" }
@@ -67,6 +69,7 @@ iOS app that reads selected metrics from Apple HealthKit and POSTs them to a Fir
 | Path | Purpose |
 |------|---------|
 | `healthexport/` | SwiftUI app source |
+| `healthexport/apple-health-api` | Firebase function |
 | `healthexport/Info.plist` | Health usage strings, BG task identifiers |
 | `healthexport/healthexport.entitlements` | HealthKit capabilities |
 | `GoogleService-Info.example.plist` | Template Firebase config (safe to commit) |
